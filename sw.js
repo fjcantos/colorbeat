@@ -1,4 +1,4 @@
-﻿// sw.js â€” guarda la app en el dispositivo para que funcione sin internet.
+﻿// sw.js — guarda la app en el dispositivo para que funcione sin internet.
 const CACHE = "colorbeat-v3";
 const FILES = [
   "./", "index.html", "style.css", "styles.js", "audio.js", "app.js", "manifest.json",
