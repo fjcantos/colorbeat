@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#121218">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ColorBeat">
+  <title>ColorBeat</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="logo"><span class="r">C</span><span class="y">o</span><span class="g">l</span><span class="b">o</span>rBeat</h1>
+    <div class="controls">
+      <label class="ctl">
+        <span>Tempo <b id="bpmVal">100</b></span>
+        <input id="bpm" type="range" min="60" max="180" value="100">
+      </label>
+      <label class="ctl">
+        <span>Volumen</span>
+        <input id="vol" type="range" min="0" max="100" value="80">
+      </label>
+      <button id="stopAll" class="btn">■ Parar todo</button>
+      <button id="rec" class="btn rec">● Grabar</button>
+    </div>
+  </header>
+
+  <nav id="styles" class="styles" aria-label="Estilo musical"></nav>
+
+  <main class="board">
+    <section>
+      <h2>Bucles <small>tócalos para encender o apagar · entran a tiempo</small></h2>
+      <div id="loops" class="grid"></div>
+    </section>
+    <section>
+      <h2>Golpes <small>suenan al momento</small></h2>
+      <div id="hits" class="grid"></div>
+    </section>
+    <section>
+      <h2>Efectos</h2>
+      <div id="fx" class="fx"></div>
+    </section>
+    <section>
+      <h2>Mis grabaciones</h2>
+      <ul id="recs" class="recs"><li class="empty">Todavía no hay grabaciones. Pulsa ● Grabar y toca.</li></ul>
+    </section>
+  </main>
+
+  <div id="start" class="start">
+    <button id="startBtn">Toca para empezar 🎶</button>
+  </div>
+
+  <script src="styles.js"></script>
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
