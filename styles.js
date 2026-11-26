@@ -173,6 +173,11 @@ function buildStyle(key) {
     N("Arpegio", "blue", "arp", st.arpInst, arpFrom(chords)),
     N("Arpegio lento", "blue", "arp", other(st.arpInst, "pluck", "bell"), arpDown(chords)),
     N("Eco melodía", "blue", null, "pluck", shift(melody, 0, 3)),
+    // Coros (sección Voces)
+    { ...N("Coro «aah»", "red", "choir", "choirA", chords), section: "voice" },
+    { ...N("Coro «ooh»", "yellow", "choir", "choirO", shift(chords, 12)), section: "voice" },
+    { ...N("Coro melodía", "green", "choirLead", "choirE", melody.map((e) => ({ ...e, notes: e.notes.map((n) => (n > 76 ? n - 12 : n)) }))), section: "voice" },
+    { ...N("Coro corto", "blue", null, "choirU", offbeatStabs(chords)), section: "voice" },
   ];
   const H = [
     ["Bombo", "kick"], ["Bombo 808", "kick2"], ["Caja", "snare"], ["Aro", "rim"],

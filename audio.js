@@ -345,7 +345,56 @@ const Engine = (() => {
     lead:   { oscs: [["sawtooth", 0, 1], ["square", 7, 1, 0.5]], f: 2400, a: 0.01, r: 0.12, vol: 0.14, vibrato: true },
   };
 
+  // ---- coros: voz sintética con formantes de vocales ----
+  const VOWELS = {
+    A: [[800, 1], [1150, 0.5], [2900, 0.15]],
+    O: [[450, 1], [800, 0.4], [2830, 0.1]],
+    E: [[400, 1], [1600, 0.4], [2700, 0.2]],
+    U: [[325, 1], [700, 0.3], [2530, 0.08]],
+  };
+  function playChoir(t, midi, dur, vowel, v = 1) {
+    const freq = mtof(midi), end = t + dur, stopAt = end + 0.35;
+    const src = ctx.createGain(), out = ctx.createGain();
+    [-7, 7].forEach((det) => {
+      const o = ctx.createOscillator();
+      o.type = "sawtooth"; o.frequency.value = freq; o.detune.value = det;
+      const l = ctx.createOscillator(), lg = ctx.createGain();
+      l.frequency.value = 5 + Math.random(); lg.gain.value = 12;
+      l.connect(lg).connect(o.detune); l.start(t); l.stop(stopAt);
+      o.connect(src); o.start(t); o.stop(stopAt);
+    });
+    for (const [f, g] of VOWELS[vowel]) {
+      const bp = filt("bandpass", f, 9), fg = gainNode(g * 6);
+      src.connect(bp).connect(fg).connect(out);
+    }
+    const peak = 0.22 * v;
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(peak, t + 0.08);
+    out.gain.setValueAtTime(peak, Math.max(t + 0.08, end));
+    out.gain.exponentialRampToValueAtTime(0.0001, Math.max(t + 0.08, end) + 0.3);
+    out.connect(input);
+  }
+
+  // ---- voces grabadas ----
+  const playing = new Map();
+  function playBuffer(id, buffer) {
+    init();
+    const old = playing.get(id);
+    if (old) try { old.stop(); } catch (e) {}
+    const s = ctx.createBufferSource();
+    s.buffer = buffer;
+    s.connect(input);
+    s.start(ctx.currentTime + 0.005);
+    playing.set(id, s);
+    s.onended = () => { if (playing.get(id) === s) playing.delete(id); };
+  }
+  function decode(arrayBuffer) {
+    init();
+    return new Promise((res, rej) => ctx.decodeAudioData(arrayBuffer, res, rej));
+  }
+
   function playNote(t, midi, dur, presetName, v = 1) {
+    if (presetName.startsWith("choir")) return playChoir(t, midi, dur, presetName.slice(5), v);
     const p = PRESETS[presetName];
     const freq = mtof(midi);
     const out = ctx.createGain();
@@ -497,7 +546,7 @@ const Engine = (() => {
   function emit(e) { listeners.forEach((f) => f(e)); }
 
   return {
-    init, setStyle, setBpm, toggleLoop, stopAll, hit, setFx, setVolume, loopProgress,
+    init, setStyle, setBpm, toggleLoop, stopAll, hit, setFx, setVolume, loopProgress, playBuffer, decode,
     on: (f) => listeners.add(f),
     get states() { return loopState.map((l) => l.state); },
     get stream() { init(); return recDest.stream; },
