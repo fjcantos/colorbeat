@@ -342,6 +342,9 @@ const Engine = (() => {
     guitar: { oscs: [["sawtooth", -5, 1], ["sawtooth", 5, 1], ["square", 0, 0.5, 0.5]], f: 3200, a: 0.004, r: 0.12, vol: 0.12, drive: 30 },
     pluck:  { oscs: [["square", 0, 1]], f: 400, fEnv: 3500, a: 0.003, r: 0.15, vol: 0.2, decay: true },
     bell:   { oscs: [["sine", 0, 1], ["sine", 0, 2.76, 0.35], ["sine", 0, 5.4, 0.12]], f: 8000, a: 0.002, r: 0.8, vol: 0.25, decay: true },
+    // Guitarras eléctricas con distorsión y "altavoz" (cab) simulado.
+    heavyGuitar: { oscs: [["sawtooth", -9, 1], ["sawtooth", 9, 1], ["square", 0, 0.5, 0.6]], f: 6000, a: 0.003, r: 0.08, vol: 0.08, drive: 90, cab: true },
+    leadGuitar:  { oscs: [["sawtooth", 0, 1], ["sawtooth", 7, 1, 0.7]], f: 5000, a: 0.006, r: 0.15, vol: 0.07, drive: 45, cab: true, vibrato: true },
     lead:   { oscs: [["sawtooth", 0, 1], ["square", 7, 1, 0.5]], f: 2400, a: 0.01, r: 0.12, vol: 0.14, vibrato: true },
   };
 
@@ -409,6 +412,12 @@ const Engine = (() => {
       ws.curve = curve(p.drive);
       f.connect(ws);
       chainEnd = ws;
+    }
+    if (p.cab) {
+      const lp = filt("lowpass", 4200, 0.9), hp = filt("highpass", 90), mid = filt("peaking", 650);
+      mid.gain.value = -5;
+      chainEnd.connect(hp).connect(mid).connect(lp);
+      chainEnd = lp;
     }
     chainEnd.connect(out).connect(input);
 
