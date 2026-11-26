@@ -59,7 +59,7 @@ const STYLES = {
     melody: "0:B4:2 2:D5:2 4:E5:4 8:G5:2 10:E5:2 12:D5:4 16:B4:2 18:A4:2 20:G4:4 24:A4:4 28:B4:4",
   },
   heavy: {
-    name: "Heavy", bpm: 150,
+    name: "Heavy", bpm: 150, fx: ["fuzz", "hall"],
     kit: { kickPitch: 0.9, kickDecay: 0.22, snareTone: 170, snareDecay: 0.28, hatDecay: 0.06 },
     bassInst: "pick", chordInst: "heavyGuitar", leadInst: "leadGuitar", arpInst: "heavyGuitar",
     drumsA: { kick: "xxxxxxxxxxxxxxxx", snare: "....x.......x...", crash: "x.......x......." },
@@ -199,5 +199,5 @@ function buildStyle(key) {
   ];
   const COLORS = ["red", "yellow", "green", "blue"];
   const hits = H.map(([name, voice], i) => ({ name, voice, color: COLORS[i % 4] }));
-  return { key, name: st.name, bpm: st.bpm, kit: st.kit, loops, hits };
+  return { key, name: st.name, bpm: st.bpm, kit: st.kit, loops, hits, fx: st.fx || [] };
 }

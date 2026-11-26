@@ -24,6 +24,23 @@ function selectStyle(key) {
   localStorage.setItem("colorbeat.style", key);
   renderStyles();
   renderPads();
+  applyStyleFx();
+}
+// Efectos que trae encendidos cada estilo (p. ej. Heavy: Fuzz + Sala grande).
+// Al cambiar de estilo se apagan los que puso el estilo anterior.
+let styleFxOn = [];
+function applyStyleFx() {
+  const pads = document.querySelectorAll("#fx .pad");
+  if (!pads.length) return;
+  const set = (key, on) => {
+    const i = FX.findIndex((f) => f.key === key);
+    if (i < 0) return;
+    pads[i].classList.toggle("on", on);
+    Engine.setFx(key, on);
+  };
+  styleFxOn.forEach((k) => set(k, false));
+  styleFxOn = current.fx.slice();
+  styleFxOn.forEach((k) => set(k, true));
 }
 
 // ---------- pads ----------
@@ -325,6 +342,7 @@ async function renderRecs() {
 // ---------- arranque ----------
 selectStyle(localStorage.getItem("colorbeat.style") in STYLES ? localStorage.getItem("colorbeat.style") : "hiphop");
 renderFx();
+applyStyleFx();
 renderPhrasePads();
 renderVoicePads();
 if ("speechSynthesis" in window) speechSynthesis.getVoices();
