@@ -91,9 +91,22 @@ $("#bpm").addEventListener("input", (e) => {
 });
 $("#vol").addEventListener("input", (e) => Engine.setVolume(e.target.value / 100));
 $("#stopAll").addEventListener("click", () => Engine.stopAll());
+// Pantalla completa: al abrirla desde un acceso directo se oculta la barra del navegador.
+function goFullscreen() {
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (req && !document.fullscreenElement && !window.matchMedia("(display-mode: standalone)").matches) {
+    try { const p = req.call(el); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+  }
+}
 $("#startBtn").addEventListener("click", () => {
   Engine.init();
+  goFullscreen();
   $("#start").classList.add("hide");
+});
+$("#full").addEventListener("click", () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else goFullscreen();
 });
 
 // ---------- grabaciones (se guardan en el propio dispositivo) ----------
